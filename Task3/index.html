@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Interactive Quiz App</title>
+  <style>
+    
+    :root{
+      
+      --shadow:0 8px 20px rgba(0,0,0,.15);
+    }
+    
+    [data-theme="light"]{
+      --bg:#f9fafb; --surface:#ffffff; --card:#f1f5f9; --text:#111827; --muted:#4b5563;
+      --accent:#2563eb; --accent-2:#3b82f6; --good:#16a34a; --bad:#dc2626;
+      --border:#e2e8f0; --border-soft:#e5e7eb; --chip:#f1f5f9; --chip-border:#e2e8f0;
+      --control:#ffffff; --control-border:#cbd5e1; --control-hover:#eff6ff;
+    }
+    
+    [data-theme="dark"]{
+      --bg:#0b1020; --surface:#0f172a; --card:#111827; --text:#e5e7eb; --muted:#94a3b8;
+      --accent:#38bdf8; --accent-2:#22d3ee; --good:#22c55e; --bad:#ef4444;
+      --border:#1f2937; --border-soft:rgba(255,255,255,.06); --chip:#0b1220; --chip-border:rgba(255,255,255,.1);
+      --control:#0b1220; --control-border:rgba(255,255,255,.1); --control-hover:#0f172a;
+      --shadow:0 10px 25px rgba(0,0,0,.35);
+      color: #e5e7eb !important;
+    }
+
+    
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background:linear-gradient(180deg,var(--bg),#e5e7eb); color:var(--text);
+      display:flex; align-items:center; justify-content:center; padding:24px
+    }
+    .app{width:100%; max-width:960px; background:var(--surface); border-radius:16px; box-shadow:var(--shadow); overflow:hidden; border:1px solid var(--border)}
+    header{padding:18px 22px; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; background:var(--chip); border-bottom:1px solid var(--border)}
+    .brand{display:flex; gap:12px; align-items:center}
+    .logo{height:36px; width:36px; display:grid; place-items:center; border-radius:12px; font-weight:800; color:#fff; background:linear-gradient(135deg,var(--accent),var(--accent-2))}
+    h1{font-size:20px; margin:0}
+    .actions{display:flex; gap:8px; flex-wrap:wrap}
+
+    
+    .btn{cursor:pointer; border:none; padding:10px 14px; border-radius:10px; font-weight:600; background:var(--accent); color:#fff; transition:background .2s, transform .1s}
+    .btn:hover{background:var(--accent-2); transform:translateY(-1px)}
+    .btn.secondary{background:var(--border); color:var(--text); border:1px solid var(--control-border)}
+    .btn.ghost{background:transparent; color:var(--text); border:1px dashed var(--control-border)}
+    .btn:disabled{opacity:.6; cursor:not-allowed}
+
+    .grid{display:grid; grid-template-columns: 1.1fr .9fr; gap:20px; padding:0 22px 22px}
+    .card{background:var(--card); border-radius:14px; padding:18px; border:1px solid var(--border-soft); box-shadow:var(--shadow)}
+    .row{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+    .muted{color:var(--muted)}
+    .select, select{appearance:none; background:var(--control); color:var(--text); padding:8px 12px; border-radius:8px; border:1px solid var(--control-border); font-weight:500}
+
+    .q-meta{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px}
+    .progress{height:8px; background:var(--border-soft); border-radius:999px; overflow:hidden}
+    .bar{height:100%; width:0; background:linear-gradient(90deg,var(--accent),var(--accent-2)); transition:width .3s}
+    .question{font-size:22px; line-height:1.5; margin-top:10px}
+    .choices{display:grid; gap:10px; margin-top:14px}
+
+    .choice{padding:12px 14px; border-radius:10px; background:var(--control); border:1px solid var(--control-border); cursor:pointer; transition:all .2s; font-weight:500;}
+    .choice:hover{background:var(--control-hover)}
+    .choice[data-state="correct"]{background:color-mix(in oklab, var(--good) 25%, white); border-color:color-mix(in oklab, var(--good) 55%, rgb(255, 255, 255))}
+    .choice[data-state="wrong"]{background:color-mix(in oklab, var(--bad) 20%, white); border-color:color-mix(in oklab, var(--bad) 50%, white)}
+    
+    .pill{font-size:12px; padding:4px 8px; border-radius:999px; background:var(--chip); border:1px solid var(--chip-border)}
+
+    .side{display:flex; flex-direction:column; gap:18px}
+    .score{font-size:28px; font-weight:700; color:var(--accent)}
+    .list{display:grid; gap:8px; max-height:300px; overflow:auto}
+    .li{font-size:14px; padding:8px 10px; border-radius:8px; background:var(--chip); border:1px solid var(--border-soft)}
+
+    footer{padding:12px 22px; color:var(--muted); font-size:12px; text-align:center; background:var(--chip); border-top:1px solid var(--border)}
+
+    @media (max-width: 900px){ .grid{grid-template-columns:1fr} }
+    @media (max-width: 520px){ header{padding:14px} .grid{padding:0 14px 14px} .btn{width:100%} }
+  </style>
+</head>
+<body>
+  <main class="app" role="application">
+    <header>
+      <div class="brand">
+        <div class="logo">QZ</div>
+        <h1>Interactive Trivia Quiz</h1>
+      </div>
+      <div class="actions">
+        <button id="toggleTheme" class="btn secondary" aria-pressed="false" aria-label="Toggle theme">Toggle Theme</button>
+        <button id="resetHigh" class="btn ghost">Reset High Score</button>
+      </div>
+    </header>
+
+    <section class="grid">
+      <section class="card" aria-live="polite">
+        <div class="row" style="justify-content:space-between; margin-bottom:10px">
+          <div class="row">
+            <label class="pill">Category</label>
+            <select id="category" class="select">
+              <option value="">Any</option>
+              <option value="9">General Knowledge</option>
+              <option value="18">Computers</option>
+              <option value="21">Sports</option>
+              <option value="23">History</option>
+              <option value="17">Science & Nature</option>
+            </select>
+            <label class="pill">Difficulty</label>
+            <select id="difficulty" class="select">
+              <option value="">Any</option>
+              <option>easy</option>
+              <option>medium</option>
+              <option>hard</option>
+            </select>
+            <label class="pill">Questions</label>
+            <select id="amount" class="select">
+              <option>5</option>
+              <option selected>10</option>
+              <option>15</option>
+            </select>
+          </div>
+          <div class="row">
+            <button id="start" class="btn">Start Quiz</button>
+            <button id="next" class="btn secondary" disabled>Next</button>
+          </div>
+        </div>
+
+        <div class="progress" aria-hidden="true"><div id="bar" class="bar"></div></div>
+        <div class="q-meta muted" style="margin-top:8px">
+          <span id="qIndex">Question –</span>
+          <span id="timer" class="pill">⏱ 00:00</span>
+        </div>
+        <div id="question" class="question">Choose options and start the quiz!</div>
+        <div id="choices" class="choices"></div>
+        <div id="explain" class="muted" style="margin-top:10px"></div>
+      </section>
+
+      <aside class="side">
+        <section class="card">
+          <div class="score">Score: <span id="score">0</span></div>
+          <div class="muted">High Score: <span id="high">0</span></div>
+          <div class="muted" style="margin-top:8px">Your Answers</div>
+          <div id="review" class="list" aria-live="polite"></div>
+        </section>
+        <section class="card">
+          <h3 style="margin-top:0">How this meets the task</h3>
+          <ul>
+            <li><strong>Responsive:</strong> media queries + adaptive grid.</li>
+            <li><strong>Interactive:</strong> timer, progress, instant feedback, review list.</li>
+            <li><strong>API:</strong> pulls questions from Open Trivia DB.</li>
+          </ul>
+        </section>
+      </aside>
+    </section>
+
+    <footer>Built with vanilla HTML, CSS (media queries), and JavaScript. Public API: Open Trivia DB.</footer>
+  </main>
+
+  <script>
+    // -------- helpers --------
+    const $ = (s) => document.querySelector(s);
+    const decodeHTML = (str) => new DOMParser().parseFromString(str, 'text/html').documentElement.textContent;
+
+    // THEME TOGGLER with persistence
+    const THEME_KEY = 'quiz-theme-v1';
+    function applyTheme(t){ document.documentElement.setAttribute('data-theme', t); $('#toggleTheme').setAttribute('aria-pressed', String(t==='dark')); }
+    function toggleTheme(){ const cur = document.documentElement.getAttribute('data-theme') || 'light'; const next = cur==='light' ? 'dark' : 'light'; applyTheme(next); localStorage.setItem(THEME_KEY,next); }
+    $('#toggleTheme').addEventListener('click', toggleTheme);
+    // on load
+    const savedTheme = localStorage.getItem(THEME_KEY);
+    if(savedTheme){ applyTheme(savedTheme); }
+
+    // State
+    let questions = []; // array of {q, choices[], answer}
+    let idx = 0; let score = 0; let timeLeft = 0; let timerId = null; let selected = null;
+
+    const bar = $('#bar');
+    const qIndex = $('#qIndex');
+    const timer = $('#timer');
+    const qEl = $('#question');
+    const choicesEl = $('#choices');
+    const scoreEl = $('#score');
+    const review = $('#review');
+    const explain = $('#explain');
+
+    // High score
+    const HIGH_KEY = 'quiz-high-score-v1';
+    const setHigh = (v) => localStorage.setItem(HIGH_KEY, String(v));
+    const getHigh = () => Number(localStorage.getItem(HIGH_KEY) || 0);
+    $('#high').textContent = getHigh();
+    $('#resetHigh').addEventListener('click', ()=>{ setHigh(0); $('#high').textContent = 0; });
+
+    // Build API url
+    function apiUrl(){
+      const amount = $('#amount').value;
+      const diff = $('#difficulty').value;
+      const cat = $('#category').value;
+      const params = new URLSearchParams({ amount, type:'multiple' });
+      if(diff) params.append('difficulty', diff);
+      if(cat) params.append('category', cat);
+      return 'https://opentdb.com/api.php?' + params.toString();
+    }
+
+    async function startQuiz(){
+      $('#start').disabled = true; $('#next').disabled = true; explain.textContent = '';
+      qEl.textContent = 'Loading questions…'; choicesEl.innerHTML = '';
+      review.innerHTML = ''; score = 0; idx = 0; scoreEl.textContent = 0; selected = null; updateProgress();
+      try{
+        const res = await fetch(apiUrl());
+        const data = await res.json();
+        questions = (data.results || []).map(mapQuestion);
+        if(!questions.length) throw new Error('No questions received');
+        renderQuestion();
+      }catch(err){
+        qEl.textContent = 'Failed to load questions. Please try again.';
+        console.error(err);
+      }finally{ $('#start').disabled = false; }
+    }
+
+    function mapQuestion(item){
+      const q = decodeHTML(item.question);
+      const correct = decodeHTML(item.correct_answer);
+      const choices = [correct, ...item.incorrect_answers.map(decodeHTML)].sort(()=>Math.random()-0.5);
+      return { q, choices, answer: correct, category: item.category, difficulty: item.difficulty };
+    }
+
+    function renderQuestion(){
+      const total = questions.length; const cur = questions[idx];
+      qIndex.textContent = `Question ${idx+1} / ${total}`;
+      qEl.textContent = cur.q;
+      explain.textContent = '';
+      choicesEl.innerHTML = '';
+      cur.choices.forEach(c => {
+        const btn = document.createElement('button');
+        btn.className = 'choice'; btn.type='button'; btn.textContent = c; btn.setAttribute('aria-pressed','false');
+        btn.addEventListener('click', ()=>selectChoice(btn, c));
+        choicesEl.appendChild(btn);
+      });
+      // 15s timer per question
+      startTimer(15);
+      $('#next').disabled = true;
+      updateProgress();
+    }
+
+    function startTimer(seconds){
+      clearInterval(timerId); timeLeft = seconds; updateTimer();
+      timerId = setInterval(()=>{ timeLeft--; updateTimer(); if(timeLeft<=0){ clearInterval(timerId); lockChoices(); showAnswer(); } },1000);
+    }
+
+    function updateTimer(){ timer.textContent = `⏱ ${String(Math.max(timeLeft,0)).padStart(2,'0')}`; }
+
+    function selectChoice(el, value){
+      if(selected) return; // prevent re-select
+      selected = value; lockChoices(); showAnswer();
+    }
+
+    function lockChoices(){
+      [...document.querySelectorAll('.choice')].forEach(b=> b.disabled = true);
+    }
+
+    function showAnswer(){
+      const cur = questions[idx];
+      [...document.querySelectorAll('.choice')].forEach(b=>{
+        const val = b.textContent;
+        if(val === cur.answer){ b.dataset.state = 'correct'; }
+        if(selected && val === selected && selected !== cur.answer){ b.dataset.state = 'wrong'; }
+      });
+      const correct = selected === cur.answer;
+      if(correct) score += 10; scoreEl.textContent = score;
+      explain.innerHTML = correct ? `✅ Correct! <span class="muted">(${cur.category} • ${cur.difficulty})</span>` : `❌ Correct Answer: <strong>${cur.answer}</strong>`;
+      addReview(cur, correct);
+      $('#next').disabled = false; clearInterval(timerId);
+    }
+
+    function addReview(q, correct){
+      const el = document.createElement('div');
+      el.className = 'li';
+      el.innerHTML = `${correct ? '✅' : '❌'} ${q.q}`;
+      review.prepend(el);
+    }
+
+    function nextQuestion(){
+      selected = null; idx++;
+      if(idx >= questions.length) return finish();
+      renderQuestion();
+    }
+
+    function updateProgress(){
+      const pct = questions.length ? (idx/questions.length)*100 : 0;
+      bar.style.width = pct + '%';
+    }
+
+    function finish(){
+      qEl.innerHTML = `Quiz complete! 🎉<br/>Final Score: <strong>${score}</strong>`;
+      choicesEl.innerHTML = '';
+      $('#next').disabled = true; explain.textContent = '';
+      bar.style.width = '100%'; qIndex.textContent = 'Complete'; timer.textContent = '⏱ --';
+      const high = getHigh(); if(score > high){ setHigh(score); $('#high').textContent = score; }
+    }
+
+    $('#start').addEventListener('click', startQuiz);
+    $('#next').addEventListener('click', nextQuestion);
+  </script>
+</body>
+</html>

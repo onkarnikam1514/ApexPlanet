@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SmartMart — 18 Products (Task 5)</title>
+
+  <!-- Critical inline theme to avoid flash -->
+  <style>
+    :root{
+      --bg:#f6f7f8; --surface:#ffffff; --card:#ffffff; --text:#0b1220; --muted:#6b7280; --accent:#0a84ff;
+      --radius:12px; --shadow:0 10px 30px rgba(2,6,23,0.06); --maxw:1100px;
+    }
+    [data-theme="dark"]{
+      --bg:#0b0d10; --surface:#0f1215; --card:#111318; --text:#e6eef6; --muted:#98a0ab; --accent:#60a5ff;
+      --shadow:0 12px 40px rgba(0,0,0,0.6);
+    }
+    html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial}
+    #app{max-width:var(--maxw);margin:18px auto;padding:14px}
+  </style>
+
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Apply saved theme early -->
+  <script>
+    try{
+      const t = localStorage.getItem('smartmart_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    }catch(e){}
+  </script>
+</head>
+<body>
+  <main id="app" aria-live="polite">
+    <header class="top">
+      <div class="brand">
+        <div class="logo">SM</div>
+        <div>
+          <h1 class="site-title">SmartMart</h1>
+          <p class="tagline">Minimal • Fast • Thoughtful</p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button id="themeToggle" class="btn ghost" aria-pressed="false" title="Toggle theme">Dark</button>
+        <button id="openCart" class="btn">Cart (<span id="cartCount">0</span>)</button>
+      </div>
+    </header>
+
+    <nav class="filters" aria-label="Product filters">
+      <input id="search" class="search" placeholder="Search products..." type="search" />
+      <select id="category" class="select"><option value="all">All Categories</option></select>
+      <select id="sort" class="select">
+        <option value="default">Sort</option>
+        <option value="price_asc">Price ↑</option>
+        <option value="price_desc">Price ↓</option>
+        <option value="rating_desc">Rating</option>
+      </select>
+    </nav>
+
+    <section id="products" class="products" aria-live="polite"></section>
+
+    <div class="pager" id="pager" aria-label="Pagination"></div>
+
+    <!-- Cart drawer -->
+    <aside id="cartDrawer" class="drawer" aria-hidden="true">
+      <div class="drawer-header">
+        <h3>Your Cart</h3>
+        <button id="closeCart" class="btn ghost">Close</button>
+      </div>
+      <div id="cartItems" class="cart-items"></div>
+      <div class="drawer-footer">
+        <div class="total">Total: <strong id="totalVal">₹0</strong></div>
+        <div class="drawer-actions">
+          <button id="clearCart" class="btn ghost">Clear</button>
+          <button id="checkout" class="btn">Checkout</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Product modal -->
+    <div id="modal" class="modal" aria-hidden="true" role="dialog">
+      <div class="modal-body">
+        <button id="modalClose" class="btn ghost">✕</button>
+        <div id="modalContent"></div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <small>Built with HTML • CSS • JavaScript — SmartMart (Task 5)</small>
+    </footer>
+  </main>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

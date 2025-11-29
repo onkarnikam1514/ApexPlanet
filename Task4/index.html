@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Samir Azam — Advanced App (Task 4)</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main id="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">SA</div>
+        <div>
+          <div class="title">Samir Azam</div>
+          <div class="subtitle" id="ownerBio">Full-stack developer skilled in MERN, real-time systems, and AI-driven applications—focused on building clean, scalable, user-centric products.</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button id="themeToggle" class="btn ghost" aria-pressed="true" title="Toggle theme">Light</button>
+        <a id="resumeLink" class="btn" href="Samir_Azam_SDE_Intern.pdf" target="_blank" rel="noopener">Resume</a>
+      </div>
+    </header>
+
+    <nav class="nav">
+      <a href="#portfolio">Portfolio</a>
+      <a href="#todo">To-Do</a>
+      <a href="#products">Products</a>
+      <a href="#notes">Notes</a>
+    </nav>
+
+    <!-- PORTFOLIO -->
+    <section id="portfolio" class="section container">
+      <div class="section-head">
+        <h2>Portfolio</h2>
+      </div>
+
+      <div id="portfolioGrid" class="grid"></div>
+    </section>
+
+    <!-- TODO -->
+    <section id="todo" class="section container">
+      <div class="section-head"><h2>To-Do App</h2></div>
+
+      <div class="panel two-col">
+        <div class="card">
+          <form id="taskForm" class="form-inline" onsubmit="return false;">
+            <input id="taskText" placeholder="Task title (required)" required>
+            <input id="taskDue" type="date">
+            <select id="taskPriority" title="priority">
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+              <option value="high">High</option>
+            </select>
+            <input id="taskTags" placeholder="tags (comma separated)">
+            <button id="addTaskBtn" class="btn">Add</button>
+            <button id="exportTasks" class="btn secondary" type="button">Export</button>
+            <input id="importTasksFile" type="file" accept="application/json" style="display:none">
+            <button id="importTasks" class="btn ghost" type="button">Import</button>
+          </form>
+
+          <div class="filters-row">
+            <input id="taskSearch" placeholder="Search tasks..." />
+            <select id="taskFilter">
+              <option value="all">All</option>
+              <option value="pending">Pending</option>
+              <option value="completed">Completed</option>
+              <option value="overdue">Overdue</option>
+            </select>
+            <select id="taskSort">
+              <option value="created_desc">Newest</option>
+              <option value="due_asc">Due Soon</option>
+              <option value="priority_desc">Priority</option>
+            </select>
+            <button id="bulkComplete" class="btn secondary">Complete All</button>
+          </div>
+
+          <ul id="taskList" class="list" aria-live="polite"></ul>
+        </div>
+
+        <aside class="card">
+          <h3>Summary</h3>
+          <div id="todoSummary" class="summary"></div>
+          <h3 style="margin-top:12px">Quick Actions</h3>
+          <div class="action-list">
+            <button id="clearCompleted" class="btn ghost">Clear Completed</button>
+            <button id="clearAll" class="btn ghost">Clear All</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- PRODUCTS -->
+    <section id="products" class="section container">
+      <div class="section-head">
+        <h2>Products</h2>
+        <div class="controls-inline">
+          <input id="productSearch" placeholder="Search products...">
+          <select id="categoryFilter"><option value="all">All categories</option></select>
+          <label class="muted">Max price</label>
+          <input type="range" id="priceRange" min="0" max="10000" step="50">
+          <select id="productSort">
+            <option value="default">Default</option>
+            <option value="price_asc">Price: Low → High</option>
+            <option value="price_desc">Price: High → Low</option>
+            <option value="rating_desc">Top Rated</option>
+          </select>
+          <button id="resetFilters" class="btn secondary">Reset</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div id="productGrid" class="product-grid"></div>
+      </div>
+
+      <div id="productPager" class="pager"></div>
+    </section>
+
+    <!-- NOTES -->
+    <section id="notes" class="section container">
+      <div class="section-head"><h2>Notes</h2></div>
+      <div class="panel two-col">
+        <div class="card">
+          <textarea id="noteText" rows="6" placeholder="Write a note..."></textarea>
+          <div class="row" style="margin-top:8px">
+            <button id="saveNote" class="btn">Save Note</button>
+            <button id="clearNotes" class="btn ghost">Clear Notes</button>
+          </div>
+        </div>
+        <aside class="card">
+          <h3>Notes List</h3>
+          <div id="notesList" class="list"></div>
+        </aside>
+      </div>
+    </section>
+
+    <footer class="footer">
+      Built with HTML • CSS • JavaScript — ApexPlanet Task 4 demo.
+    </footer>
+  </main>
+
+  <!-- MODAL -->
+  <div id="modal" class="modal" aria-hidden="true">
+    <div class="modal-dialog" role="dialog" aria-modal="true">
+      <button id="modalClose" class="modal-close" aria-label="Close">✕</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

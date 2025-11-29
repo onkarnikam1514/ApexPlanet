@@ -1,0 +1,122 @@
+/* General Styles */
+
+
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  background: #121212;
+  color: #f5f5f5;
+
+}
+
+/* Header */
+header {
+  background: url('https://images.pexels.com/photos/1656377/pexels-photo-1656377.jpeg') center/cover no-repeat;
+  color: #ffffff;
+  text-decoration-line: underline;
+  text-align: center;
+  padding: 5rem 2rem;
+  background-blend-mode: overlay;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+header h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+header p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+.highlight {
+  background: #1b7a81;
+  color: #fff;
+  border-radius: 5px;
+  display: inline-block;
+  text-decoration-line: overline;
+}
+
+
+/* Destinations Section */
+#destinations {
+  padding: 2rem;
+  text-align: center;
+}
+
+#destinations h2 {
+  color: #aaa;
+  font: italic
+}
+
+.cards {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.card {
+  background: #1e1e1e;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+  max-width: 300px;
+  padding: 1rem;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(255,152,0,0.5);
+}
+
+.card img {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.card h3 {
+  color: #aaa;
+}
+
+/* Call to Action */
+#cta {
+  background: #aaa;
+  color: #121212;
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+#cta h2 {
+  margin-bottom: 1rem;
+}
+
+#cta button {
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 5px;
+  background: #121212;
+  color: #aaa;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+
+#cta button:hover {
+  background: #aaa;
+  color: #121212;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  background: #1e1e1e;
+  color: #aaa;
+  padding: 1rem;
+}
